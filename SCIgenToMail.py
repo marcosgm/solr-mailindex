@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
-import urllib2, re, sys
+import urllib2, re, sys, smtplib, os
+from email.mime.multipart import MIMEMultipart 
+from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
 
 def getSciGenHTML():
     anotherone="http://apps.pdos.lcs.mit.edu/cgi-bin/scigen.cgi?"
@@ -34,7 +37,32 @@ def savePDFtoFile(seed,filepath):
     FILE.close()
     print("... Saved PDF to %s" % filepath)
     
+def sendPDFtoMail(pdfpath,emailaddress,erase=True):
+    me=emailaddress #from me to myself
+    pdfname=os.path.basename(pdfpath)
+    msg = MIMEMultipart()
+    msg['Subject'] = 'Paper %s' % pdfname
+    msg['From'] = me
+    msg['To'] = emailaddress
+
+    body = MIMEText ("See attached my <b> LATEST <a href='http://apps.pdos.lcs.mit.edu/'>SCIGEN</a> <u> PAPER </u> </b>", "html")
+    msg.attach(body)
+    fp = open(pdfpath, 'rb')
+    pdf = MIMEApplication(fp.read(),"pdf; name ='%s'" %pdfname) 
+    fp.close()
+    msg.attach(pdf)
+
+    s = smtplib.SMTP('localhost')
+    s.sendmail(me, emailaddress, msg.as_string())
+    s.quit()
+
+    if erase == True:
+        os.remove(pdfpath)
+
 if __name__ == "__main__":
     paper = getSciGenHTML()
     seed=parseHTMLforPDFseed(paper)
-    savePDFtoFile(seed,"/tmp/scigen-%s.pdf" %seed)
+    pdfpath="/tmp/scigen-%s.pdf" %seed
+    savePDFtoFile(seed,pdfpath)
+    sendPDFtoMail(pdfpath,emailaddress="solr.test@savoirfairelinux.com")
+
