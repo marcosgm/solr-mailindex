@@ -1,0 +1,17 @@
+#put this file in $HOME/.getmail/getmailrc
+[retriever]
+type = SimpleIMAPRetriever
+server = mail.savoirfairelinux.com
+username = xxxxx
+password = xxxxx
+
+[destination]
+type = MDA_external
+path = /opt/SOLRTEST/mda.sh
+       
+[options]
+verbose = 0
+delete = true
+message_log = ~/.getmail/log
+message_log_verbose = true
+
