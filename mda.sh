@@ -6,9 +6,9 @@ UUID=$(uuidgen)
 MAILDIR="/opt/SOLRTEST/maildir"
 TMPMAIL=$MAILDIR/tmp/$UUID  #random temp folder
 cat - > $TMPMAIL
-MESSAGEHEADERS=$(head -n 200 $TMPMAIL) #need to to this in 2 steps to avoid: "Delivery error (command mda.sh 10064 wrote to stderr: head: write error: Broken pipe"
-MESSAGEID=$(echo $MESSAGEHEADERS |formail -xMessage-Id |sed 's/[< >]//g') #extract Message-ID, regardless of upper or lowercase
-#MESSAGEID=$UUID
+#need to to this in 2 steps to avoid: "Delivery error (command mda.sh 10064 wrote to stderr: head: write error: Broken pipe"
+MSGID=$(head -n 500 $TMPMAIL |formail -xMessage-Id) #extract Message-ID, regardless of upper or lowercase
+MESSAGEID=$(echo $MSGID |sed 's/[< >]//g') #remove <,>, and space
 
 if [ -z $MESSAGEID ]; then
     MESSAGEID=$UUID   
