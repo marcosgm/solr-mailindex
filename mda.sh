@@ -25,7 +25,7 @@ mkdir -p $ARCHIVEDEST
 
 #lets call ripmime to chop the MIMEfile into multiple files with attachments
 cat $FILEPATH | $MIMETOOL $ARCHIVEDEST #will put files in -d $ARCHIVEDEST
-rm $FILEPATH #remove original MIME file
+#rm $FILEPATH #remove original MIME file
 
 #clean up empty files (ripmime problem?)
 for f in $(ls $ARCHIVEDEST/*); do 
@@ -35,6 +35,10 @@ done
 #now send the files to SOLR
 SOLRURL="http://liferay-hydroqc-cluster1.mtllab.sfl:8983/solr/mail/upload"
 ARCHIVEURL="http://archiveserver/$YEARMONTH/$MESSAGEID"
+
+#SOLRCELL CAN ACCEPT MIMEFILES AND EXTRACT THE DATA. WE JUST HAVE TO MAP SOME VALUES, AND ADD OTHER INFO (like links to the archived attachments) AFTERWARDS, USSING MESSAGEID
+#we have to map the tag <div class="email-entry"> to an attachment
+curl "http://localhost:8983/solr/mail/update/extract?literal.messageId=$MESSAGEID&commit=true&fmap.content=attachment&capture=meta&fmap.meta=ignored_meta&fmap.Message-From=from&fmap.Creation-Date=sentDate&" -F "myfile=@$FILEPATH" -v
 
 #./endMIMEfolderToSOLR.py --folder $ARCHIVEDEST --solrurl $SOLRURL --archiveUrl $ARCHIVEURL
 
