@@ -5,6 +5,8 @@ This is a proof-of-concept of a tool used to download mails from an IMAP folder,
 
 Mails can always be retrieved thanks to the archive filesystem structure. SOLR will index all fields and use a UUID field to match together the MAIL text and metadata with its attachments
 
-== REQUIREMENTS ==
+REQUIREMENTS 
+====
 yum install getmail python-requests ripmime
+
 pysolr.py from https://github.com/toastdriven/pysolr
