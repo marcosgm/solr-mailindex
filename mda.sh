@@ -27,20 +27,29 @@ mkdir -p $ARCHIVEDEST
 cat $FILEPATH | $MIMETOOL $ARCHIVEDEST #will put files in -d $ARCHIVEDEST
 #rm $FILEPATH #remove original MIME file
 
+TIKAJAR="/opt/tika/tika-app-1.3.jar"
 #clean up empty files (ripmime problem?)
-for f in $(ls $ARCHIVEDEST/*); do 
-    test ! -s $f  && rm $f;  #if the file is empty, remove it
+#whitespace problem: for f in $(ls $ARCHIVEDEST/*); do 
+find $ARCHIVEDEST -type f -print0 | while read -d $'\0' f
+do
+    test ! -s "$f"  && rm "$f";  #if the file is empty, remove it
+    filename=$(basename "$f")
+    if [[ $filename != _headers_ && $filename != textfile* ]]; then
+        echo $f "is going to Tika"
+        java -jar $TIKAJAR -x "$f" > "${f}_tikaxml" 2>/dev/null
+    fi
 done
+
 
 #now send the files to SOLR
 SOLRURL="http://liferay-hydroqc-cluster1.mtllab.sfl:8983/solr/mail/upload"
 ARCHIVEURL="http://archiveserver/$YEARMONTH/$MESSAGEID"
 
 #SOLRCELL CAN ACCEPT MIMEFILES AND EXTRACT THE DATA. WE JUST HAVE TO MAP SOME VALUES, AND ADD OTHER INFO (like links to the archived attachments) AFTERWARDS, USSING MESSAGEID
-#we have to map the tag <div class="email-entry"> to an attachment
-curl "http://localhost:8983/solr/mail/update/extract?literal.messageId=$MESSAGEID&commit=true&fmap.content=attachment&capture=meta&fmap.meta=ignored_meta&fmap.Message-From=from&fmap.Creation-Date=sentDate&" -F "myfile=@$FILEPATH" -v
+#PROBLEM: we have to map the tag <div class="email-entry"> to an attachment
+#curl "http://localhost:8983/solr/mail/update/extract?literal.messageId=$MESSAGEID&commit=true&fmap.content=attachment&capture=meta&fmap.meta=ignored_meta&fmap.Message-From=from&fmap.Creation-Date=sentDate&" -F "myfile=@$FILEPATH" -v
 
-#./endMIMEfolderToSOLR.py --folder $ARCHIVEDEST --solrurl $SOLRURL --archiveUrl $ARCHIVEURL
+#./sendMIMEfolderToSOLR.py --folder $ARCHIVEDEST --solrurl $SOLRURL --archiveUrl $ARCHIVEURL
 
 #exit OK, probably getmail will remove the mail from IMAP
 exit 0
