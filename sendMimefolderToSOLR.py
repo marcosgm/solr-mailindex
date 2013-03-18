@@ -21,16 +21,17 @@ class mimeFolderObject :
         #if we find a "textfile" file, then we send its content to the "content" field
         #similarly, the _headers_ file must be parsed and sent to their corresponding fields
         self.archiveURL=archiveurl
+        self._iterate()
 
     def _iterate(self):
         for filename in os.listdir(self.path):
             ffile=os.path.join(self.path,filename)
-            if (filename.startswith("textfile") and os.path.getsize(filename)>0):
+            if (filename.startswith("textfile") and os.path.getsize(ffile)>0):
                 self.arrayDocs.append(self.getTextDic(ffile, filename))
             elif (filename.startswith("_headers_")):
                 self.arrayDocs.append(self.getHeadersDic(ffile))
             elif (filename.endswith("_tikaxml")):
-                self.arrayDocs.append(self.getTextDic(ffile, file[:filename.find("_tikaxml")]))
+                self.arrayDocs.append(self.getTextDic(ffile, filename[:filename.find("_tikaxml")]))
 #            elif (os.path.isfile(ffile)):
 #                self.arrayDocs.append(self.getTikaDic(ffile))
         return
@@ -85,9 +86,6 @@ def main():
     parser.add_option("-a", "--archiveURL", dest="archiveurl", type="string", help="Archive URL for recovering the files over HTTP, FTP, SMB, etc")
     
     (options, args) = parser.parse_args()
-    print (str(len(args)))
-    if len(args) != 4:
-            parser.error("incorrect number of arguments + "+str(len(args)))
 
     print (options.messageid, options.folder, options.solrurl, options.archiveurl)
     mm=mimeFolderObject(options.folder, options.messageid,  options.archiveurl)
