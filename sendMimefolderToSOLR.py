@@ -3,15 +3,19 @@
 from __future__ import print_function
 from email.Parser import HeaderParser
 from optparse import OptionParser
+import json
 
 import pysolr
 import os
 
 # Setup a Solr instance. The timeout is optional.
-solr = pysolr.Solr('http://localhost:8983/solr/', timeout=10)
+solr = pysolr.Solr('http://192.168.103.160:8983/solr/mail/', timeout=10)
 
 tikaJarPath=""
 
+''' 
+It represents a folder with the MIME content of an email, split by attachment. It holds an array of dictionaries. Every dictionary represents the parsed text and metadata of every file, plus other attributes like the attachmentURL, which is the public URL to download the file. There is also one dictionary with the metadata elements of the mail headers.
+'''
 class mimeFolderObject :
     def __init__ (self, path, messageid, archiveurl):
         self.path   = path
@@ -57,18 +61,48 @@ class mimeFolderObject :
         ret["allTo"]        = p.__getitem__("To")
         return ret
         
+    def _setAddJsonValue (self, dictelem, key):
+        olddictvalue = dictelem[key]
+        dictelem[key]={}
+        dictelem[key]["add"]=olddictvalue
+        
+    def serializeArraySolrJSON (self):
+        ''' Return an array of dictionaries where their values are {"add":value}, that will permit Solr addition to multipleValue items '''
+        updateJsonObj=[]
+        for d in self.arrayDocs:
+            copiedval=d.copy()
+            #if it is an attachment, change their "attachment" value for another dictionary with the key "add"  so SOLR will use the MultiValue field features
+            if "attachment" in copiedval: 
+                self._setAddJsonValue(copiedval,"attachment")
+            if "attachmentURL" in copiedval: 
+                self._setAddJsonValue(copiedval,"attachmentURL")
+            if "attachmentName" in copiedval: 
+                self._setAddJsonValue(copiedval,"attachmentName")
+            updateJsonObj.append(copiedval)
+        return updateJsonObj
+            
 
 
-
-# How you'd index data.
+# How you'd index data using multiple values.
 #solr.add([
 #    {
-#        "id": "doc_1",
-#        "title": "A test document",
-#    },
-#    {
-#        "id": "doc_2",
-#        "title": "The Banana: Tasty or Dangerous?",
+#        "attachmentName": 
+#            {
+#               "add":  "doc1"
+#            },
+#        "attachment": 
+#            {
+#               "add":  "This is the first doc"
+#            },
+#    },{
+#        "attachmentName": 
+#            {
+#               "add":  "doc2"
+#            },
+#        "attachment": 
+#            {
+#               "add":  "Now the second doc"
+#            },
 #    },
 #])
 #id="20130314165928.2BD997FA7A@liferay-hydroqc-cluster1.mtllab.sfl"
@@ -86,11 +120,27 @@ def main():
     parser.add_option("-a", "--archiveURL", dest="archiveurl", type="string", help="Archive URL for recovering the files over HTTP, FTP, SMB, etc")
     
     (options, args) = parser.parse_args()
+    if not options.messageid or not options.folder or not options.solrurl or not options.archiveurl:
+        parser.error("Invalid number of arguments")
 
     print (options.messageid, options.folder, options.solrurl, options.archiveurl)
     mm=mimeFolderObject(options.folder, options.messageid,  options.archiveurl)
 
-    print (mm.arrayDocs)
+    solrupdate=mm.serializeArraySolrJSON()
+    addDict={}
+    addDict["add"]=[]
+    for d in solrupdate:
+        x={}
+        x["doc"]=d
+        addDict["add"].append(x)
+    
+    print (json.dumps(addDict))
+
+#    print (json.dumps(solrupdate))
+#    solr.add(solrupdate)
+#curl "http://localhost:8983/solr/mail/update?literal.messageId=1234&commit=true&literal.attachmentNames=Example3" --data-binary '{"add":{"doc":{"messageId":"12345","attachment":{"add":"<email>Example3</email>"}}}}' -H 'Content-type: application/json' -v
+
+        
 
 if __name__ == "__main__":
         main()

@@ -34,7 +34,7 @@ find $ARCHIVEDEST -type f -print0 | while read -d $'\0' f
 do
     test ! -s "$f"  && rm "$f";  #if the file is empty, remove it
     filename=$(basename "$f")
-    if [[ $filename != _headers_ && $filename != textfile* ]]; then
+    if [[ $filename != _headers_ && $filename != textfile* && $filename != *_tikaxml ]]; then
         echo $f "is going to Tika"
         java -jar $TIKAJAR -x "$f" > "${f}_tikaxml" 2>/dev/null
     fi
@@ -49,7 +49,7 @@ ARCHIVEURL="http://archiveserver/$YEARMONTH/$MESSAGEID"
 #PROBLEM: we have to map the tag <div class="email-entry"> to an attachment
 #curl "http://localhost:8983/solr/mail/update/extract?literal.messageId=$MESSAGEID&commit=true&fmap.content=attachment&capture=meta&fmap.meta=ignored_meta&fmap.Message-From=from&fmap.Creation-Date=sentDate&" -F "myfile=@$FILEPATH" -v
 
-#./sendMIMEfolderToSOLR.py --folder $ARCHIVEDEST --solrurl $SOLRURL --archiveUrl $ARCHIVEURL
+/opt/SOLRTEST/sendMimefolderToSOLR.py --folder $ARCHIVEDEST --messageid $MESSAGEID --solrURL $SOLRURL --archiveURL $ARCHIVEURL
 
 #exit OK, probably getmail will remove the mail from IMAP
 exit 0
