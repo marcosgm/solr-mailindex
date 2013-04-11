@@ -7,6 +7,6 @@ Mails can always be retrieved thanks to the archive filesystem structure. SOLR w
 
 REQUIREMENTS 
 ====
-yum install getmail python-requests ripmime
+yum install getmail python-requests ripmime procmail
 
 pysolr.py from https://github.com/toastdriven/pysolr

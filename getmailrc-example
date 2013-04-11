@@ -8,7 +8,11 @@ password = xxxxx
 [destination]
 type = MDA_external
 path = /opt/SOLRTEST/mda.sh
-       
+# Switch to fred's UID and the mail group GID before delivering his mail
+# user = fred
+# group = mail
+# arguments = ("--strip-forbidden-attachments", "--recipient=%(recipient)")      
+ 
 [options]
 verbose = 0
 delete = true
