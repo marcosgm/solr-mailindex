@@ -1,0 +1,7 @@
+#set($docId = $doc.getFieldValue('id'))
+
+<div class="result-document">
+#if($doc.getFieldValue('from'))
+  #parse("email-doc.vm")
+#end
+</div>

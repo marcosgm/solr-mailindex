@@ -1,0 +1,17 @@
+<div class="result-title"><b>$esc.html($doc.getFieldValue('from'))</b></div>
+<div><b>Date:</b> #field('sentDate'). <a href=" #field('emlURL') ">See original email</a></div>
+<div><b>Subject:</b> #field('subject')</div>
+  <ul>
+  #set ($attachmentURL=$doc.getFieldValue('attachmentURL'))
+  #foreach ($attURL in $attachmentURL)
+  <li> <a href=$attURL>$attURL</a> </li>
+  #end
+</ul>
+#if ($response.response.highlighting)
+<div><b>Matches:</b> 
+<ul>
+  #foreach ($a in $response.response.highlighting.get($doc.getFieldValue('messageId')).get('attachment'))
+      <li>$a</li>
+  #end
+</ul> </div>
+#end

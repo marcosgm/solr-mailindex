@@ -348,7 +348,7 @@
 
  <fields>
    <field name="messageId" type="string" indexed="true" stored="true" required="true" omitNorms="true" />
-   <field name="subject" type="string" indexed="true" stored="true" omitNorms="true" />
+   <field name="subject" type="text" indexed="true" stored="true" omitNorms="true" />
    <field name="from" type="string" indexed="true" stored="true" omitNorms="true"/>
    <field name="sentDate" type="date" indexed="true" stored="true"/>
    <field name="xMailer" type="string" indexed="true" stored="true" omitNorms="true"/>
@@ -400,7 +400,6 @@
   <copyField source="content" dest="catchAllField"/>
   <copyField source="attachmentNames" dest="catchAllField"/>
   <copyField source="attachment" dest="catchAllField"/>
-  <copyField source="links" dest="catchAllField"/>
   <copyField source="subject" dest="catchAllField"/>
   <copyField source="allTo" dest="catchAllField"/>
 
