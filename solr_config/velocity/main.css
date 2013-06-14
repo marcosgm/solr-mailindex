@@ -1,11 +1,19 @@
+@import url("http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic");
+
 #admin{
   text-align: right;
   vertical-align: top; 
+  float: right;
+  margin: 10px 10px 0px 0px;
 }
 
-#head{
+body div#header {
   width: 100%;
+  background-image:url('/solr/img/head.png');
 }
+
+
+
 .array-field {
   border: 2px solid #474747;
   background: #FFE9D8;
@@ -18,21 +26,42 @@
   margin-left: 20px;
 }
 
+body div#admin_cont,
+body div#head,
+body div#content  div.pagination_cont,
+body div#content  div.navigators_cont,
+body div#content  div.query-box,
+body div#content  div.error,
+body div#content  div.results {
+  width: 950px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
 .parsed_query_header {
-  font-family: Helvetica, Arial, sans-serif;
+  /*font-family: Helvetica, Arial, sans-serif;*/
+  font-family: 'Noto Sans', Helvetica, Arial, sans-serif;
   font-size: 10pt;
   font-weight: bold;
 }
 
 .parsed_query {
-  font-family: Courier, Courier New, monospaced;
+/*  font-family: Courier, Courier New, monospaced;*/
+  font-family: 'Noto Sans', Helvetica, Arial, sans-serif;
   font-size: 10pt;
   font-weight: normal;
 }
 
 body {
-  font-family: Helvetica, Arial, sans-serif;
+/*  font-family: Helvetica, Arial, sans-serif;*/
+  font-family: 'Noto Sans', Helvetica, Arial, sans-serif;
   font-size: 10pt;
+  margin: 0px;
+}
+
+body #content {
+  background-image:url('/solr/img/body.png');
+  background-repeat:repeat-x;
 }
 
 a {
@@ -47,12 +76,14 @@ a {
   padding: 5px;
   top: -20px;
   position: relative;  
+  border: 1px solid #999999;
+  background: #EEEEEE;
 }
 
 .navigators h2 {
-  background: #FEC293;
-  border: 1px solid #ce9d77;
+  color: #56B0C9;
   padding: 5px;
+  margin: 0px;
 }
 
 .navigators ul {
@@ -97,9 +128,12 @@ a {
 }
 
 #query-form{
-  width: 80%;
+  width: 100%;
 }
 
+#query-form div.inputs span {
+  color: #56B0C9;
+}
 
 
 .query-box, .constraints {
@@ -113,10 +147,11 @@ a {
 .query-box #q {
   margin-left: 8px;
   width: 60%;
-  height: 50px;
+  height: 40px;
   border: 1px solid #999;
-  font-size: 1em;
-  padding: 0.4em;
+  font-size: 0.9em;
+  line-height: 40px;
+  padding: 0 0.4em;
 }
 
 .query-box {
@@ -124,7 +159,7 @@ a {
 }
 
 .query-boost {
-  
+  display: none;
   top: 10px;
   left: 50px;
   position: relative;
@@ -132,9 +167,38 @@ a {
 }
 
 .query-box .inputs{
-  left: 180px;
   position: relative;
-  
+  text-align: center;
+}
+
+
+.query-box .inputs input#querySubmit {
+	background:#25A6E1;
+	background:-moz-linear-gradient(top,#25A6E1 0%,#188BC0 100%);
+	background:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#25A6E1),color-stop(100%,#188BC0));
+	background:-webkit-linear-gradient(top,#25A6E1 0%,#188BC0 100%);
+	background:-o-linear-gradient(top,#25A6E1 0%,#188BC0 100%);
+	background:-ms-linear-gradient(top,#25A6E1 0%,#188BC0 100%);
+	background:linear-gradient(top,#25A6E1 0%,#188BC0 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#25A6E1',endColorstr='#188BC0',GradientType=0);
+	padding:8px 13px;
+	color:#fff;
+	font-family:'Helvetica Neue',sans-serif;
+	font-size:17px;
+	border-radius:4px;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	border:1px solid #1A87B9;
+	top: -2;
+ 	position: relative;
+}
+
+.query-box .inputs input#querySubmit:hover {
+	cursor: pointer;
+}
+
+.query-box .inputs input:nth-child(3) {
+	display: none;
 }
 
 #logo {
@@ -143,12 +207,14 @@ a {
 }
 
 .pagination {
-  padding-left: 33%;
-  background: #eee;
+/*  padding-left: 33%;*/
+  background: #222222;
   margin: 5px;
   margin-left: 210px;
   padding-top: 5px;
   padding-bottom: 5px;
+  text-align: center;
+  color: #FFFFFF;
 }
 
 .result-document {
@@ -161,7 +227,13 @@ a {
 
 .result-document div{
   padding: 5px;
+  color: #555555;
 }
+
+.result-document div b{
+  color: #000000;
+}
+
 
 .result-title{
   width:60%;
@@ -181,8 +253,42 @@ a {
   top: -25px;  
 }
 
-.result-document:nth-child(2n+1) {
+/*.result-document:nth-child(2n+1) {*/
+.result-document {
   background-color: #eee;
+}
+
+.result-document div.result-title {
+  float: left;
+}
+
+.result-document div:nth-child(2) {
+  float: right;
+  text-align: right;
+  font-size: 11px;
+}
+
+.result-document div:nth-child(3) {
+  clear: right;
+  float: left;
+}
+
+.result-document ul:nth-child(4) {
+  float: right;
+  text-align: right;
+  font-size: 11px;
+  list-style-type: none;
+}
+
+.result-document div:nth-child(5) {
+  clear: right;
+  background-color: #ffffff;
+  border: 1px solid #999;
+}
+
+.result-document div:nth-child(5) ul {
+  font-size: 10pt;
+  color: #000000;
 }
 
 
@@ -205,4 +311,9 @@ li.show {
   width:80%;
   position: relative;
 
+}
+
+
+div#footer {
+  padding: 5px 10px;
 }

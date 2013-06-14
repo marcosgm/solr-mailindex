@@ -1,10 +1,13 @@
 <div class="result-title"><b>$esc.html($doc.getFieldValue('from'))</b></div>
-<div><b>Date:</b> #field('sentDate'). <a href=" #field('emlURL') ">See original email</a></div>
+<div><b>Date:</b> #field('sentDate')<br/><a href=" #field('emlURL') ">See original email</a></div>
 <div><b>Subject:</b> #field('subject')</div>
   <ul>
   #set ($attachmentURL=$doc.getFieldValue('attachmentURL'))
   #foreach ($attURL in $attachmentURL)
-  <li> <a href=$attURL>$attURL</a> </li>
+##  #set ($filename=$attURL.split("/")[$attURL.split(",").length()])
+  #set ($last_id=$$attURL.split("/").size() - 1) 
+  #set ($filename=$attURL.split("/").get($last_id))
+  <li> <a href=$attURL>$filename</a> </li>
   #end
 </ul>
 #if ($response.response.highlighting)
